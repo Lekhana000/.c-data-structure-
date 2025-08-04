@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RFID Log Viewer</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f0f0f0; }
+    h1 { color: #333; }
+    #log { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .entry { border-bottom: 1px solid #ddd; padding: 8px 0; }
+  </style>
+</head>
+<body>
+  <h1>RFID Card Scan Log</h1>
+  <div id="log">Loading...</div>
+
+  <script>
+    const firebaseURL = "https://myiot-6f98a-default-rtdb.firebaseio.com/rfidlog.json";
+
+    async function fetchRFIDLogs() {
+      const res = await fetch(firebaseURL);
+      const data = await res.json();
+      const logDiv = document.getElementById("log");
+
+      if (!data) {
+        logDiv.innerHTML = "No logs found.";
+        return;
+      }
+
+      logDiv.innerHTML = ""; // Clear previous entries
+
+      // Loop through entries
+      Object.entries(data).reverse().forEach(([key, value]) => {
+        const div = document.createElement("div");
+        div.className = "entry";
+        div.textContent = `UID: ${value.uid}`;
+        logDiv.appendChild(div);
+      });
+    }
+
+    fetchRFIDLogs();
+    setInterval(fetchRFIDLogs, 5000); // Refresh every 5 seconds
+  </script>
+</body>
+</html>
